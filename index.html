@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIFI-25 - Numia</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <h1 class="aifi-title">AIFI-25</h1>
+                <div class="numia-logo">
+                    <img src="assets/images/numia.png" alt="Numia Logo" class="numia-image">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Separator Line -->
+    <div class="separator"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="form-container">
+            <form class="registration-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre">Nombre*</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellidos">Apellidos*</label>
+                        <input type="text" id="apellidos" name="apellidos" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="telefono">Número de teléfono*</label>
+                        <input type="tel" id="telefono" name="telefono" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="correo">Correo*</label>
+                        <input type="email" id="correo" name="correo" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    ENVIAR
+                    <span class="arrow">→</span>
+                </button>
+            </form>
+            
+            <!-- Turn Information Section (hidden initially) -->
+            <div id="turn-info" class="turn-info-section" style="display: none;">
+                <div class="turn-info-header">
+                    <h3>¡Registro Exitoso!</h3>
+                    <div class="turn-status">
+                        <span class="status-indicator"></span>
+                        <span class="status-text">En espera</span>
+                    </div>
+                </div>
+                
+                <div class="turn-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Turno</div>
+                        <div class="detail-value" id="turn-number">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Código</div>
+                        <div class="detail-value" id="turn-code">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Tiempo de espera promedio</div>
+                        <div class="detail-value" id="waiting-time">-</div>
+                    </div>
+                </div>
+                
+                <!-- Video Call Section (hidden initially) -->
+                <div id="video-call-section" class="video-call-mobile" style="display: none;">
+                    <div class="video-call-notification">
+                        <div class="notification-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="notification-content">
+                            <h4>¡Es tu turno!</h4>
+                            <p>Conéctate a la videollamada:</p>
+                            <a href="#" id="video-call-link" class="video-call-button" target="_blank">
+                                <i class="fas fa-external-link-alt"></i>
+                                Conectar a videollamada
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="turn-actions">
+                    <button id="copy-url-btn" class="btn-secondary">
+                        <i class="fas fa-copy"></i>
+                        Copiar URL
+                    </button>
+                    <button id="new-registration-btn" class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Nuevo Registro
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
