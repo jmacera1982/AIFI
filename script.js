@@ -201,14 +201,18 @@ function startTurnMonitoringMobile() {
 
 // Update turn data in mobile interface
 function updateTurnDataMobile(turnData) {
+    console.log('Turn data received:', turnData); // Debug log
+    
     // Update average waiting time
     const avgTime = turnData.jsonDetails?.averageWaitingTime || 0;
     document.getElementById('waiting-time').textContent = Math.round(avgTime) + ' minutos';
     
-    // Update status
+    // Update status - check both possible locations for status
     const statusText = document.querySelector('.status-text');
     const statusIndicator = document.querySelector('.status-indicator');
-    const newStatus = turnData.jsonDetails?.status || 'En espera';
+    const newStatus = turnData.status || turnData.jsonDetails?.status || 'En espera';
+    
+    console.log('Current status:', newStatus); // Debug log
     
     // Only update if status is not "WAITING_TO_BE_CALLED"
     if (newStatus !== 'WAITING_TO_BE_CALLED') {
