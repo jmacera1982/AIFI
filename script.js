@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // Extract required data
                         const extractedData = {
-                            videoCallUrl: result.videoCallUrl + '?videocallUser=mobile',
+                            videoCallUrl: addVideoCallUserParam(result.videoCallUrl),
                             turn: result.jsonDetails.turn,
                             averageWaitingTime: result.jsonDetails.averageWaitingTime,
                             code: result.code,
@@ -96,11 +96,29 @@ let turnCode = null;
 let monitoringInterval = null;
 let currentVideoCallUrl = null;
 
+// Add videocallUser parameter to URL if not already present
+function addVideoCallUserParam(url) {
+    if (!url) return url;
+    
+    // Check if the parameter already exists
+    if (url.includes('videocallUser=')) {
+        return url;
+    }
+    
+    // Add the parameter
+    const separator = url.includes('?') ? '&' : '?';
+    return url + separator + 'videocallUser=mobile';
+}
+
 // Show success with extracted data (Mobile Interface)
 function showSuccessWithDataMobile(data) {
     // Store data for monitoring
     turnCode = data.code;
     currentVideoCallUrl = data.videoCallUrl;
+    
+    // Hide the form
+    const form = document.querySelector('.registration-form');
+    form.style.display = 'none';
     
     // Show the turn info section
     const turnInfoSection = document.getElementById('turn-info');
@@ -110,6 +128,9 @@ function showSuccessWithDataMobile(data) {
     document.getElementById('turn-number').textContent = data.turn;
     document.getElementById('turn-code').textContent = data.code;
     document.getElementById('waiting-time').textContent = Math.round(data.averageWaitingTime) + ' minutos';
+    
+    // Show video call URL immediately
+    showVideoCallMobile(data.videoCallUrl);
     
     // Start monitoring
     startTurnMonitoringMobile();
@@ -196,7 +217,7 @@ function updateTurnDataMobile(turnData) {
             statusIndicator.style.background = '#10b981';
             
             // Show video call section
-            showVideoCallMobile(turnData.videoCallUrl + '?videocallUser=mobile');
+            showVideoCallMobile(addVideoCallUserParam(turnData.videoCallUrl));
         } else {
             statusText.textContent = newStatus;
             
@@ -224,8 +245,207 @@ function showVideoCallMobile(videoCallUrl) {
     // Show section
     videoCallSection.style.display = 'block';
     
+    // Add click event to replace page content
+    videoCallLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        replacePageContent(videoCallUrl);
+    });
+    
     // Scroll to video call section
     videoCallSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Replace page content with video call
+function replacePageContent(videoCallUrl) {
+    // Stop monitoring
+    stopTurnMonitoring();
+    
+    // Replace entire page content
+    document.body.innerHTML = `
+        <div class="video-call-page">
+            <div class="video-call-container">
+                <div class="video-call-header">
+                    <div class="logo-section">
+                        <h1 class="aifi-title">AIFI-25</h1>
+                        <div class="numia-logo">
+                            <img src="assets/images/numia.png" alt="Numia Logo" class="numia-image">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="video-call-content">
+                    <div class="video-call-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h2>Conectando a la videollamada...</h2>
+                    <p>Serás redirigido automáticamente a la videollamada</p>
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                    </div>
+                    <div class="video-call-actions">
+                        <a href="${videoCallUrl}" class="video-call-btn" target="_blank">
+                            <i class="fas fa-external-link-alt"></i>
+                            Abrir videollamada
+                        </a>
+                        <button onclick="location.reload()" class="back-btn">
+                            <i class="fas fa-arrow-left"></i>
+                            Volver al inicio
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+            
+            .video-call-page {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            
+            .video-call-container {
+                background: white;
+                border-radius: 20px;
+                padding: 40px;
+                text-align: center;
+                max-width: 500px;
+                width: 100%;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            }
+            
+            .video-call-header {
+                margin-bottom: 40px;
+            }
+            
+            .logo-section {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .aifi-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                background: linear-gradient(90deg, #ff6b9d 0%, #4ecdc4 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin: 0;
+            }
+            
+            .numia-image {
+                height: 40px;
+                width: auto;
+                max-width: 200px;
+                object-fit: contain;
+            }
+            
+            .video-call-content h2 {
+                color: #1f2937;
+                margin-bottom: 15px;
+                font-size: 1.8rem;
+            }
+            
+            .video-call-content p {
+                color: #6b7280;
+                margin-bottom: 30px;
+                font-size: 1.1rem;
+            }
+            
+            .video-call-icon {
+                font-size: 4rem;
+                color: #10b981;
+                margin-bottom: 20px;
+            }
+            
+            .loading-spinner {
+                margin: 30px 0;
+            }
+            
+            .spinner {
+                width: 40px;
+                height: 40px;
+                border: 4px solid #e5e7eb;
+                border-top: 4px solid #10b981;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            .video-call-actions {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                margin-top: 30px;
+            }
+            
+            .video-call-btn, .back-btn {
+                padding: 15px 30px;
+                border: none;
+                border-radius: 10px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                text-decoration: none;
+                font-size: 1rem;
+            }
+            
+            .video-call-btn {
+                background: #10b981;
+                color: white;
+            }
+            
+            .video-call-btn:hover {
+                background: #059669;
+                transform: translateY(-2px);
+            }
+            
+            .back-btn {
+                background: #6b7280;
+                color: white;
+            }
+            
+            .back-btn:hover {
+                background: #4b5563;
+                transform: translateY(-2px);
+            }
+            
+            @media (max-width: 768px) {
+                .logo-section {
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                
+                .video-call-container {
+                    padding: 30px 20px;
+                }
+            }
+        </style>
+    `;
+    
+    // Auto-redirect after 3 seconds
+    setTimeout(() => {
+        window.open(videoCallUrl, '_blank');
+    }, 3000);
 }
 
 // Show success with extracted data
