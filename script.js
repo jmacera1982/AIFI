@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = Object.fromEntries(formData);
             
             // Simple validation
-            const requiredFields = ['nombre', 'apellidos', 'telefono', 'correo'];
+            const requiredFields = ['nombre', 'apellidos', 'telefono', 'correo', 'cargo'];
             let isValid = true;
             
             requiredFields.forEach(field => {
@@ -29,6 +29,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
+            // Email domain validation
+            const emailInput = form.querySelector('[name="correo"]');
+            if (emailInput && emailInput.value.trim()) {
+                const email = emailInput.value.toLowerCase();
+                const restrictedDomains = ['gmail.com', 'hotmail.com', 'yahoo.com', 'outlook.com', 'live.com'];
+                const emailDomain = email.split('@')[1];
+                
+                if (restrictedDomains.includes(emailDomain)) {
+                    isValid = false;
+                    emailInput.style.borderColor = '#ff6b9d';
+                    emailInput.style.boxShadow = '0 0 0 2px rgba(255, 107, 157, 0.3)';
+                    showNotification('No se permiten dominios como gmail, hotmail, yahoo. Por favor, usa un correo corporativo.', 'error');
+                    
+                    // Reset styling after 3 seconds
+                    setTimeout(() => {
+                        emailInput.style.borderColor = '';
+                        emailInput.style.boxShadow = '';
+                    }, 3000);
+                }
+            }
+            
             if (isValid) {
                 // Show loading state
                 const submitBtn = form.querySelector('.submit-btn');
@@ -43,7 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         firstName: data.nombre,
                         lastName: data.apellidos,
                         email: data.correo,
-                        phone: data.telefono
+                        phone: data.telefono,
+                        dni: data.cargo
                     };
                     
                     // Send to API
